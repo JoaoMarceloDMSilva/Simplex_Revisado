@@ -1,173 +1,77 @@
 import numpy as np
 
-indexValueToEnter: int = None
-minValue: float = None
-auxMemoryDiv: float = None
-auxMemoryIndex: float = None
+indexMenorValor: int = None
+valorMin: float = None
+menorValorDiv: float = None
+indexMenorValorDiv: int = None
 
-aux1, aux2, aux3, aux4 = None, None, None, None
+r_ForaBase = [  [3, 6], #outBase
+                [4, 2]]
+
+b_NaBase = [    [1, 0], #inBase
+                [0, 1]]
+
+cr_ForaBase = [-20, -24] #of_out
+
+cb_NaBase = [0, 0] #of_in
+
+b_coef = [  [60], # b
+            [32]]
 
 def numBellowZero(num: list) -> bool:
     for i in num:
         if i < 0:
             return True
 
-# R --> fora da base
-outBase = [ [3, 6], 
-            [4, 2]]
-#outBaseInv = np.linalg.inv(outBase) #   Mariz inversa
+if numBellowZero(cr_ForaBase):
+    valorMin  = min(cr_ForaBase)
+    indexMenorValor = cr_ForaBase.index(min(cr_ForaBase))
 
-# B --> na base
-inBase = [  [1, 0],
-            [0, 1]]
+#   Selecionar variável que sai da base
+valorGrande = 100000000000000000000000000000
+for linha in range(len(r_ForaBase)):
+    auxValorDiv = b_coef[linha][0] / r_ForaBase[linha][indexMenorValor]
+    auxGetLinha = linha
+    if auxValorDiv < valorGrande:
+        menorValorDiv = auxValorDiv
+        indexMenorValorDiv = auxGetLinha
+        valorGrande = auxValorDiv
 
-# Cr --> FO fora da basae
-of_out = [-20, -24]
+for linha in range(len(r_ForaBase)):
+    getValorNaBase = b_NaBase[linha][indexMenorValorDiv]
+    getValorForaBase = r_ForaBase[linha][indexMenorValor]
+    b_NaBase[linha][indexMenorValorDiv] = getValorForaBase
+    r_ForaBase[linha][indexMenorValor] = getValorNaBase
 
+get_cr_ForaBase = cr_ForaBase[indexMenorValor]
+get_cb_NaBase = cb_NaBase[indexMenorValorDiv]
+cr_ForaBase[indexMenorValor] = get_cb_NaBase
+cb_NaBase[indexMenorValorDiv] = get_cr_ForaBase
 
-#Cb --> FO na base
-of_in = [0, 0]
+r_ForaBaseArray = np.array(r_ForaBase)
+b_NaBaseArray = np.array(b_NaBase)
+b_NaBaseInv = np.linalg.inv(b_NaBaseArray)
+cr_ForaBaseArray = np.array(cr_ForaBase)
+cb_NaBaseArray = np.array(cb_NaBase)
+b_coefArray = np.array(b_coef)
 
+print("-"*30)
+print(f"r_ForaBaseArray: \n{r_ForaBaseArray}\n")
+print(f"b_NaBaseArray:\n{b_NaBaseArray}\n")
+print(f"b_NaBaseInv:\n{b_NaBaseInv}\n")
+print(f"cr_ForaBaseArray:\n{cr_ForaBaseArray}\n")
+print(f"cb_NaBaseArray:\n{cb_NaBaseArray}\n\n")
+print(F"b_coefArray: \n{b_coefArray}\n")
+print("-"*30)
 
-# b --> coeficinete
-b = [ [60],
-      [32]]
-bNP = np.array(b)
+print("_"*30)
+cr_ForaBaseArray = cr_ForaBaseArray - (np.dot(cb_NaBaseArray, np.dot(b_NaBaseInv, r_ForaBaseArray)))
+print(f"cr_ForaBaseArray:\n{cr_ForaBaseArray}\n")
 
-#Verifica se há valor NEGATIVO fora da base
-#Primeiro
-if numBellowZero(of_out):
-    minValue  = min(of_out)
-    indexValueToEnter = of_out.index(min(of_out))
+b_coefArray = np.dot(b_NaBaseInv, b_coefArray)
+print(F"b_coefArray: \n{b_coefArray}\n")
 
-#Acha a coluna 
-#for i in range(len(outBase)):
-#     print( b[i][0] / outBase[i][indexValueToEnter])
-#Segundo
+r_ForaBaseArray = np.dot(b_NaBaseInv, r_ForaBaseArray)
+print(f"r_ForaBaseArray: \n{r_ForaBaseArray}\n")
 
-aux = 100000000000000000000000000000
-for i in range(len(outBase)):
-    #print(b[i][0] / outBase[i][indexValueToEnter])
-    aux_temp = b[i][0] / outBase[i][indexValueToEnter]
-    aux_index = i
-
-    if aux_temp < aux:
-        auxMemoryDiv = aux_temp # Pega o menor número
-        #print(auxMemoryDiv)
-        auxMemoryIndex = aux_index #  Quem foi dividido
-        aux = aux_temp
-
-# alterar bases:
-for i in range(len(outBase)):
-    aux1 = inBase[i][auxMemoryIndex]
-    aux2 = outBase[i][indexValueToEnter]
-    #print(f"{aux1}\t{aux2}")
-    outBase[i][indexValueToEnter] = aux1
-    inBase[i][auxMemoryIndex] = aux2
-    #print(f"{inBase[i][auxMemoryIndex]}\t{outBase[i][indexValueToEnter]}")
-
-#troca na FOs
-aux3 = of_out[indexValueToEnter]
-aux4 = of_in[auxMemoryIndex]
-of_out[indexValueToEnter] = aux4
-of_in[auxMemoryIndex] = aux3
-
-#print(f"\naux3: [{aux3}]\taux4: [{aux4}]")
-
-#Converte em array após alterar
-
-#print(f"{outBase}\n")
-#print(f"{inBase}\n")
-#
-outBaseNP = np.array(outBase) # R
-inBaseNP = np.array(inBase) # B
-inBaseInvNP = np.linalg.inv(inBaseNP) # B^-1
-of_inNP = np.array(of_in) # Cb
-of_outNP = np.array(of_out) # Cr
-
-print(f"outBaseNP: \n{outBaseNP}\n")
-print(f"inBaseNP:\n{inBaseNP}\n")
-print(f"inBaseInvNP:\n{inBaseInvNP}\n")
-
-print(f"of_inNP:\n{of_inNP}\n")
-print(f"of_outNP:\n{of_outNP}\n\n")
-print(F"bNP: \n{bNP}\n")
-#atualizar o Cr (of_outNP)
-of_outNP = of_outNP - (np.dot(of_inNP, np.dot(inBaseInvNP, outBaseNP))) 
-print(f"of_outNP = \n{of_outNP}\n")
-
-bNP = np.dot(inBaseInvNP,bNP)
-print(F"bNP: \n{bNP}\n")
-
-outBaseNP = np.dot(inBaseInvNP, outBaseNP)
-print(F"outBaseNP: \n{outBaseNP}\n")
-print(f"FO: {np.dot(of_inNP, np.dot(inBaseInvNP, bNP))} ")
-
-# ---------
-print("-"*20)
-if numBellowZero(of_out):
-    minValue  = min(of_out)
-    indexValueToEnter = of_out.index(min(of_out))
-
-#Acha a coluna 
-#for i in range(len(outBase)):
-#     print( b[i][0] / outBase[i][indexValueToEnter])
-#Segundo
-
-aux = 100000000000000000000000000000
-for i in range(len(outBase)):
-    #print(b[i][0] / outBase[i][indexValueToEnter])
-    aux_temp = b[i][0] / outBase[i][indexValueToEnter]
-    aux_index = i
-
-    if aux_temp < aux:
-        auxMemoryDiv = aux_temp # Pega o menor número
-        #print(auxMemoryDiv)
-        auxMemoryIndex = aux_index #  Quem foi dividido
-        aux = aux_temp
-
-# alterar bases:
-for i in range(len(outBase)):
-    aux1 = inBase[i][auxMemoryIndex]
-    aux2 = outBase[i][indexValueToEnter]
-    #print(f"{aux1}\t{aux2}")
-    outBase[i][indexValueToEnter] = aux1
-    inBase[i][auxMemoryIndex] = aux2
-    #print(f"{inBase[i][auxMemoryIndex]}\t{outBase[i][indexValueToEnter]}")
-
-#troca na FOs
-aux3 = of_out[indexValueToEnter]
-aux4 = of_in[auxMemoryIndex]
-of_out[indexValueToEnter] = aux4
-of_in[auxMemoryIndex] = aux3
-
-#print(f"\naux3: [{aux3}]\taux4: [{aux4}]")
-
-#Converte em array após alterar
-
-#print(f"{outBase}\n")
-#print(f"{inBase}\n")
-#
-outBaseNP = np.array(outBase) # R
-inBaseNP = np.array(inBase) # B
-inBaseInvNP = np.linalg.inv(inBaseNP) # B^-1
-of_inNP = np.array(of_in) # Cb
-of_outNP = np.array(of_out) # Cr
-
-print(f"outBaseNP: \n{outBaseNP}\n")
-print(f"inBaseNP:\n{inBaseNP}\n")
-print(f"inBaseInvNP:\n{inBaseInvNP}\n")
-
-print(f"of_inNP:\n{of_inNP}\n")
-print(f"of_outNP:\n{of_outNP}\n\n")
-print(F"bNP: \n{bNP}\n")
-#atualizar o Cr (of_outNP)
-of_outNP = of_outNP - (np.dot(of_inNP, np.dot(inBaseInvNP, outBaseNP))) 
-print(f"of_outNP = \n{of_outNP}\n")
-
-bNP = np.dot(inBaseInvNP,bNP)
-print(F"bNP: \n{bNP}\n")
-
-outBaseNP = np.dot(inBaseInvNP, outBaseNP)
-print(F"outBaseNP: \n{outBaseNP}\n")
-print(f"FO: {np.dot(of_inNP, np.dot(inBaseInvNP, bNP))} ")
+print(f"FO: {np.dot(cb_NaBaseArray, np.dot(b_NaBaseInv, b_coefArray))} ")
