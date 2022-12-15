@@ -35,6 +35,7 @@ b = [ [60],
 bNP = np.array(b)
 
 #Verifica se há valor NEGATIVO fora da base
+#Primeiro
 if numBellowZero(of_out):
     minValue  = min(of_out)
     indexValueToEnter = of_out.index(min(of_out))
@@ -42,6 +43,8 @@ if numBellowZero(of_out):
 #Acha a coluna 
 #for i in range(len(outBase)):
 #     print( b[i][0] / outBase[i][indexValueToEnter])
+#Segundo
+
 aux = 100000000000000000000000000000
 for i in range(len(outBase)):
     #print(b[i][0] / outBase[i][indexValueToEnter])
@@ -76,22 +79,95 @@ of_in[auxMemoryIndex] = aux3
 #print(f"{outBase}\n")
 #print(f"{inBase}\n")
 #
-outBaseNP = np.array(outBase) # B
-inBaseNP = np.array(inBase) # R
-outBaseInvNP = np.linalg.inv(outBaseNP) # B^-1
-of_inNP = np.array(of_in)
-of_outNP = np.array(of_out)
+outBaseNP = np.array(outBase) # R
+inBaseNP = np.array(inBase) # B
+inBaseInvNP = np.linalg.inv(inBaseNP) # B^-1
+of_inNP = np.array(of_in) # Cb
+of_outNP = np.array(of_out) # Cr
 
 print(f"outBaseNP: \n{outBaseNP}\n")
 print(f"inBaseNP:\n{inBaseNP}\n")
+print(f"inBaseInvNP:\n{inBaseInvNP}\n")
 
 print(f"of_inNP:\n{of_inNP}\n")
-print(f"of_outNP:\n{of_outNP}\n")
+print(f"of_outNP:\n{of_outNP}\n\n")
+print(F"bNP: \n{bNP}\n")
 #atualizar o Cr (of_outNP)
-#of_outNP = of_outNP - of_inNP.dot(outBaseInvNP.dot(inBaseNP) )
-#print(of_outNP)
+of_outNP = of_outNP - (np.dot(of_inNP, np.dot(inBaseInvNP, outBaseNP))) 
+print(f"of_outNP = \n{of_outNP}\n")
 
-bNP = outBaseInvNP.dot(bNP)
-print(bNP)
+bNP = np.dot(inBaseInvNP,bNP)
+print(F"bNP: \n{bNP}\n")
 
-#bNP = outBaseInvNP.dot(bNP)
+outBaseNP = np.dot(inBaseInvNP, outBaseNP)
+print(F"outBaseNP: \n{outBaseNP}\n")
+print(f"FO: {np.dot(of_inNP, np.dot(inBaseInvNP, bNP))} ")
+
+# ---------
+print("-"*20)
+if numBellowZero(of_out):
+    minValue  = min(of_out)
+    indexValueToEnter = of_out.index(min(of_out))
+
+#Acha a coluna 
+#for i in range(len(outBase)):
+#     print( b[i][0] / outBase[i][indexValueToEnter])
+#Segundo
+
+aux = 100000000000000000000000000000
+for i in range(len(outBase)):
+    #print(b[i][0] / outBase[i][indexValueToEnter])
+    aux_temp = b[i][0] / outBase[i][indexValueToEnter]
+    aux_index = i
+
+    if aux_temp < aux:
+        auxMemoryDiv = aux_temp # Pega o menor número
+        #print(auxMemoryDiv)
+        auxMemoryIndex = aux_index #  Quem foi dividido
+        aux = aux_temp
+
+# alterar bases:
+for i in range(len(outBase)):
+    aux1 = inBase[i][auxMemoryIndex]
+    aux2 = outBase[i][indexValueToEnter]
+    #print(f"{aux1}\t{aux2}")
+    outBase[i][indexValueToEnter] = aux1
+    inBase[i][auxMemoryIndex] = aux2
+    #print(f"{inBase[i][auxMemoryIndex]}\t{outBase[i][indexValueToEnter]}")
+
+#troca na FOs
+aux3 = of_out[indexValueToEnter]
+aux4 = of_in[auxMemoryIndex]
+of_out[indexValueToEnter] = aux4
+of_in[auxMemoryIndex] = aux3
+
+#print(f"\naux3: [{aux3}]\taux4: [{aux4}]")
+
+#Converte em array após alterar
+
+#print(f"{outBase}\n")
+#print(f"{inBase}\n")
+#
+outBaseNP = np.array(outBase) # R
+inBaseNP = np.array(inBase) # B
+inBaseInvNP = np.linalg.inv(inBaseNP) # B^-1
+of_inNP = np.array(of_in) # Cb
+of_outNP = np.array(of_out) # Cr
+
+print(f"outBaseNP: \n{outBaseNP}\n")
+print(f"inBaseNP:\n{inBaseNP}\n")
+print(f"inBaseInvNP:\n{inBaseInvNP}\n")
+
+print(f"of_inNP:\n{of_inNP}\n")
+print(f"of_outNP:\n{of_outNP}\n\n")
+print(F"bNP: \n{bNP}\n")
+#atualizar o Cr (of_outNP)
+of_outNP = of_outNP - (np.dot(of_inNP, np.dot(inBaseInvNP, outBaseNP))) 
+print(f"of_outNP = \n{of_outNP}\n")
+
+bNP = np.dot(inBaseInvNP,bNP)
+print(F"bNP: \n{bNP}\n")
+
+outBaseNP = np.dot(inBaseInvNP, outBaseNP)
+print(F"outBaseNP: \n{outBaseNP}\n")
+print(f"FO: {np.dot(of_inNP, np.dot(inBaseInvNP, bNP))} ")
