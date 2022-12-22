@@ -14,17 +14,19 @@ cr_ForaBaseArray = None
 cb_NaBaseArray = None
 b_coefArray = None
 
-r_ForaBase = [  [1, 2, 1], #outBase
+# Deve-se adicionar as matrizes manualmente nos respectivos campos
+
+r_ForaBase = [  [1, 2, 1], # R
                 [2, 0, 0],
                 [0, 1, 1]]
 
-b_NaBase = [    [1, 0, 0], #inBase
+b_NaBase = [    [1, 0, 0], # B
                 [0, 1, 0],
                 [0, 0, 1]]
 
-cr_ForaBase = [-2, 0, -4] #of_out
+cr_ForaBase = [-2, 0, -4] # Cr
 
-cb_NaBase = [0, 0, 0] #of_in
+cb_NaBase = [0, 0, 0] #Cb
 
 b_coef = [  [8000], # b
             [6000],
@@ -64,7 +66,7 @@ def get_VariavelSaiBase(indexMenorValor):#   Selecionar variável que sai da bas
     cr_ForaBase[indexMenorValor] = get_cb_NaBase
     cb_NaBase[indexMenorValorDiv] = get_cr_ForaBase
 
-def transformaArray():
+def transformaArray(): # Transforma em Array para efetuar os cálculos no numpy
     global r_ForaBaseArray
     global b_NaBaseArray
     global b_NaBaseInv 
